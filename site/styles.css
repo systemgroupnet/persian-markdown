@@ -17,39 +17,24 @@
 
 /* ---------- Fonts (self-hosted, no CDN) ---------- */
 
+/* Fallback statics for browsers without variable-font support. */
+/*
+ * The single variable file serves every weight from 100 to 900.
+ *
+ * Static Regular/Medium/Bold faces were declared alongside it and won
+ * the font-matching contest regardless of declaration order, so the
+ * browser fetched all four files and the preloaded variable one went
+ * unused. Declaring only this face removes the ambiguity: one request,
+ * 111KB, every weight. Variable font support is universal in browsers
+ * that can render the rest of this page.
+ */
 @font-face {
   font-family: "Vazirmatn";
-  src: url("/assets/fonts/Vazirmatn[wght].woff2") format("woff2-variations");
+  src: url("assets/fonts/Vazirmatn[wght].woff2") format("woff2");
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
-
-/* Fallback statics for browsers without variable-font support. */
-@font-face {
-  font-family: "Vazirmatn";
-  src: url("/assets/fonts/Vazirmatn-Regular.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Vazirmatn";
-  src: url("/assets/fonts/Vazirmatn-Medium.woff2") format("woff2");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Vazirmatn";
-  src: url("/assets/fonts/Vazirmatn-Bold.woff2") format("woff2");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
 /* ---------- Design tokens ---------- */
 
 :root {

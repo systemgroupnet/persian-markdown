@@ -60,11 +60,32 @@ export function createEditorTheme(): Extension {
         borderLeftColor: "var(--foreground)",
         borderLeftWidth: "1.5px",
       },
-      "&.cm-focused .cm-selectionBackground, .cm-selectionBackground": {
-        backgroundColor: "var(--accent)",
-      },
+      /*
+       * Selection, and the two separate reasons it was previously invisible.
+       *
+       * 1. Specificity. CodeMirror's own default ships
+       *    `.ͼ2.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground`
+       *    — five class selectors. A shorter rule like
+       *    `&.cm-focused .cm-selectionBackground` has three and loses, so
+       *    whatever colour we set here was silently discarded and the built-in
+       *    pale lavender was used instead. The selector below deliberately
+       *    mirrors CodeMirror's shape to match its specificity; our theme is
+       *    injected after the base theme, so an equal-specificity rule wins.
+       *
+       * 2. Paint order. `.cm-selectionLayer` sits at `z-index: -2`, behind the
+       *    line content. `.cm-activeLine` used an OPAQUE background, so on the
+       *    line being edited it painted straight over the selection. That is
+       *    the line users select on almost every time, which is why the
+       *    selection read as completely missing rather than merely faint.
+       *    Both layers are translucent now, so they composite instead of one
+       *    hiding the other.
+       */
+      "&.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground, & > .cm-scroller > .cm-selectionLayer .cm-selectionBackground":
+        {
+          background: "var(--selection)",
+        },
       ".cm-activeLine": {
-        backgroundColor: "var(--muted)",
+        backgroundColor: "var(--active-line)",
       },
       ".cm-placeholder": {
         color: "var(--muted-foreground)",

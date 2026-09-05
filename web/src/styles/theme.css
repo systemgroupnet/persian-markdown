@@ -65,6 +65,27 @@
   --muted-foreground: oklch(45% 0 0);
   --accent: oklch(93% 0 0);
   --accent-foreground: oklch(16% 0 0);
+
+  /*
+   * Text selection.
+   *
+   * Deliberately NOT --accent. Selection used to reuse it, which put a 93%
+   * swatch on a 96% active-line background in light mode and 27% on 23% in
+   * dark: a three-to-four percent lightness difference, on the exact line the
+   * user is editing, which reads as no selection at all. Mixing the foreground
+   * instead keeps the palette strictly monochrome while staying obvious in
+   * both themes, and the alpha means selected text stays readable rather than
+   * being covered by an opaque block.
+   */
+  --selection: color-mix(in srgb, var(--foreground) 26%, transparent);
+
+  /*
+   * The active-line tint MUST stay translucent. CodeMirror paints its
+   * selection layer at z-index -2, behind the line content, so an opaque
+   * value here covers the selection on the one line the user is most likely
+   * to be selecting on.
+   */
+  --active-line: color-mix(in srgb, var(--foreground) 5%, transparent);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -89,38 +110,23 @@
   --accent-foreground: oklch(95% 0 0);
 }
 
+/*
+ * The single variable file serves every weight from 100 to 900.
+ *
+ * Static Regular/Medium/Bold faces were declared alongside it and won
+ * the font-matching contest regardless of declaration order, so the
+ * browser fetched all four files and the preloaded variable one went
+ * unused. Declaring only this face removes the ambiguity: one request,
+ * 111KB, every weight. Variable font support is universal in browsers
+ * that can render the rest of this page.
+ */
 @font-face {
   font-family: "Vazirmatn";
-  src: url("/assets/fonts/Vazirmatn[wght].woff2") format("woff2-variations");
+  src: url("/assets/fonts/Vazirmatn[wght].woff2") format("woff2");
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
-
-@font-face {
-  font-family: "Vazirmatn";
-  src: url("/assets/fonts/Vazirmatn-Regular.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Vazirmatn";
-  src: url("/assets/fonts/Vazirmatn-Medium.woff2") format("woff2");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Vazirmatn";
-  src: url("/assets/fonts/Vazirmatn-Bold.woff2") format("woff2");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
 html,
 body {
   background-color: var(--background);
@@ -129,4 +135,15 @@ body {
 
 body {
   font-family: var(--font-sans);
+}
+
+/*
+ * Selection everywhere outside CodeMirror: the rendered preview, the WYSIWYG
+ * surface, and plain UI text. CodeMirror suppresses the native selection and
+ * paints its own layer, so it needs the separate rule in views/source/theme.ts;
+ * these two must agree or selecting across the split view looks like two
+ * different products.
+ */
+::selection {
+  background-color: var(--selection);
 }
