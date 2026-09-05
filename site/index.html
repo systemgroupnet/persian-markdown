@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ویرایشگر مارکداون فارسی</title>
-  <meta name="description" content="ویرایشگر مشترک و بلادرنگ مارکداون با راست‌چینی واقعی — بدون ثبت‌نام، بدون نصب، متن‌باز." />
+  <meta name="description" content="ویرایشگر مارکداون فارسی، سریع با قابلیت همکاری با دیگران. راست‌چین درست، بدون ثبت‌نام، بدون نصب و متن‌باز." />
   <meta name="color-scheme" content="light dark" />
 
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='2' fill='%23171717'/%3E%3Cg stroke='%23fafafa' stroke-width='1.5' stroke-linecap='round'%3E%3Cline x1='6' y1='9' x2='18' y2='9'/%3E%3Cline x1='6' y1='15' x2='18' y2='15'/%3E%3Cline x1='11' y1='4' x2='9' y2='20'/%3E%3Cline x1='15' y1='4' x2='13' y2='20'/%3E%3C/g%3E%3C/svg%3E" />
@@ -16,7 +16,7 @@
   <a class="skip-link" href="#main">پرش به محتوای اصلی</a>
 
   <!-- Reusable icon defs (Lucide-style, 1.5px stroke, monochrome). Rendered once,
-       referenced by <use> everywhere else — no per-instance duplication. -->
+       referenced by <use> everywhere else, with no per-instance duplication. -->
   <svg class="visually-hidden" aria-hidden="true" width="0" height="0">
     <defs>
       <symbol id="icon-hash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -99,11 +99,11 @@
     <section class="hero">
       <div class="wrap">
         <div class="hero-copy">
-          <span class="hero-eyebrow">متن‌باز · MIT · بدون سرور شخصی لازم</span>
-          <h1>مارکداون فارسی، به‌صورت مشترک و بلادرنگ</h1>
+          <span class="hero-eyebrow">متن‌باز · MIT · بدون نیاز به سرور</span>
+          <h1>مارکداون فارسی، سریع با قابلیت همکاری با دیگران</h1>
           <p class="lede">
-            یک اتاق بسازید، لینک را بفرستید و همان لحظه با هم بنویسید —
-            با راست‌چینی واقعی، نه فقط آینه‌شدن ظاهری رابط کاربری.
+            یک اتاق بسازید، لینک را بفرستید و همان لحظه با هم بنویسید.
+            راست‌چین اینجا واقعی است، نه یک رابط چپ‌چین که فقط آینه شده.
           </p>
           <div class="cta-row">
             <a class="btn btn-primary" href="https://github.com/systemgroupnet/persian-markdown">
@@ -119,6 +119,7 @@
         <div class="mockup-frame">
           <svg
             viewBox="0 0 720 460"
+            direction="ltr"
             role="img"
             aria-label="نمای صفحه ویرایشگر: در سمت راست متن خام مارکداون یک یادداشت جلسه، و در سمت چپ پیش‌نمایش زنده‌ی همان سند به همراه نشانگر یک همکار دیگر."
           >
@@ -159,33 +160,41 @@
             <rect class="fill-border" x="626" y="308" width="77" height="9" rx="2" />
             <rect class="fill-border" x="546" y="324" width="157" height="9" rx="2" />
 
-            <!-- Left pane: live preview -->
-            <text class="text-muted" x="17" y="66" text-anchor="start" font-size="12">پیش‌نمایش</text>
+            <!--
+              Left pane: live preview. Persian content is right-aligned within
+              its own pane, exactly as the real editor renders it. A mockup
+              showing left-aligned Persian would contradict the claim this page
+              is making, so the whole pane is mirrored: text anchors at x=343,
+              placeholder bars are laid out from that edge, and the checkbox
+              sits to the right of its label.
+            -->
+            <text class="text-muted" x="343" y="66" text-anchor="end" font-size="12">پیش‌نمایش</text>
 
-            <text class="text-fg" x="17" y="98" text-anchor="start" font-size="19" font-weight="700">
+            <text class="text-fg" x="343" y="98" text-anchor="end" font-size="19" font-weight="700">
               یادداشت‌های جلسه
             </text>
 
-            <rect class="fill-border" x="17" y="114" width="240" height="9" rx="2" />
-            <rect class="fill-border" x="17" y="130" width="190" height="9" rx="2" />
+            <rect class="fill-border" x="103" y="114" width="240" height="9" rx="2" />
+            <rect class="fill-border" x="153" y="130" width="190" height="9" rx="2" />
 
-            <rect class="fill-muted stroke-strong" x="17" y="154" width="14" height="14" rx="2" stroke-width="1" />
-            <text class="text-fg" x="39" y="165" text-anchor="start" font-size="13">بازبینی خروجی HTML</text>
+            <rect class="fill-muted stroke-strong" x="329" y="154" width="14" height="14" rx="2" stroke-width="1" />
+            <text class="text-fg" x="321" y="165" text-anchor="end" font-size="13">بازبینی خروجی HTML</text>
 
-            <rect class="fill-strong" x="17" y="182" width="14" height="14" rx="2" />
-            <text class="text-fg" x="39" y="193" text-anchor="start" font-size="13">تست راست‌چین شدن</text>
+            <rect class="fill-strong" x="329" y="182" width="14" height="14" rx="2" />
+            <text class="text-fg" x="321" y="193" text-anchor="end" font-size="13">تست راست‌چین شدن</text>
 
-            <rect class="fill-muted stroke-border" x="17" y="212" width="322" height="46" rx="2" stroke-width="1" />
-            <text class="text-mono text-fg" x="33" y="240" text-anchor="start" font-size="13" direction="ltr" unicode-bidi="isolate">42</text>
+            <!-- Code stays LTR inside an RTL document, which is the point. -->
+            <rect class="fill-muted stroke-border" x="21" y="212" width="322" height="46" rx="2" stroke-width="1" />
+            <text class="text-mono text-fg" x="37" y="240" text-anchor="start" font-size="13" direction="ltr" unicode-bidi="isolate">42</text>
 
-            <rect class="fill-border" x="17" y="282" width="200" height="9" rx="2" />
-            <rect class="fill-border" x="17" y="298" width="260" height="9" rx="2" />
-            <rect class="fill-border" x="17" y="314" width="150" height="9" rx="2" />
+            <rect class="fill-border" x="143" y="282" width="200" height="9" rx="2" />
+            <rect class="fill-border" x="83" y="298" width="260" height="9" rx="2" />
+            <rect class="fill-border" x="193" y="314" width="150" height="9" rx="2" />
 
             <!-- Remote collaborator cursor + name tag (a 2px-radius square tag, per the design system: avatars are squares, not circles) -->
-            <rect class="fill-strong" x="150" y="278" width="2" height="16" />
-            <rect class="stroke-strong fill-muted" x="130" y="298" width="90" height="18" rx="2" stroke-width="1" />
-            <text class="text-fg" x="175" y="311" text-anchor="middle" font-size="11">سنجاب-سبز</text>
+            <rect class="fill-strong" x="208" y="278" width="2" height="16" />
+            <rect class="stroke-strong fill-muted" x="140" y="298" width="90" height="18" rx="2" stroke-width="1" />
+            <text class="text-fg" x="185" y="311" text-anchor="middle" font-size="11">سنجاب-سبز</text>
           </svg>
         </div>
       </div>
@@ -196,32 +205,32 @@
       <div class="wrap">
         <div class="section-head">
           <span class="eyebrow">چرا این ویرایشگر</span>
-          <h2>چهار چیزی که واقعاً اهمیت دارد</h2>
+          <h2>چهار چیزی که واقعا مهم است</h2>
         </div>
 
         <div class="features-grid">
           <article class="feature-card">
             <svg class="feature-icon" aria-hidden="true"><use href="#icon-zap" /></svg>
-            <h3>بلادرنگ و بدون ثبت‌نام</h3>
-            <p>یک اتاق بسازید و لینک را بفرستید؛ ویرایش مشترک همان لحظه شروع می‌شود، بدون حساب کاربری.</p>
+            <h3>همزمان، بدون ثبت‌نام</h3>
+            <p>یک اتاق بسازید و لینک را بفرستید. همان لحظه با هم می‌نویسید، بدون اینکه کسی حساب بسازد.</p>
           </article>
 
           <article class="feature-card">
             <svg class="feature-icon" aria-hidden="true"><use href="#icon-align" /></svg>
             <h3>راست‌چین واقعی</h3>
-            <p>جهت‌دهی دوسویه‌ی درست از پایه، نه صرفاً آینه‌شدن ظاهری یک رابط کاربری چپ‌چین.</p>
+            <p>فارسی و انگلیسی هر کدام جهت خودشان را دارند، حتی وقتی توی یک خط کنار هم بیایند.</p>
           </article>
 
           <article class="feature-card">
             <svg class="feature-icon" aria-hidden="true"><use href="#icon-columns" /></svg>
             <h3>سه حالت نمایش</h3>
-            <p>متن خام، پیش‌نمایش زنده، یا ویرایش دیداری؛ هر زمان بین آن‌ها جابه‌جا شوید.</p>
+            <p>متن خام، پیش‌نمایش زنده یا ویرایش دیداری. هر وقت خواستید عوض کنید.</p>
           </article>
 
           <article class="feature-card">
             <svg class="feature-icon" aria-hidden="true"><use href="#icon-download" /></svg>
             <h3>خروجی MD و HTML</h3>
-            <p>هر وقت خواستید، سند را به‌صورت فایل مارکداون یا HTML روی دستگاه خودتان ذخیره کنید.</p>
+            <p>سند را هر وقت خواستید به شکل فایل MD یا HTML روی دستگاه خودتان ذخیره کنید.</p>
           </article>
         </div>
       </div>
@@ -232,13 +241,13 @@
       <div class="wrap">
         <div class="section-head">
           <span class="eyebrow">داده‌ی شما، سرور شما</span>
-          <h2>اجرای شخصی با یک دستور</h2>
+          <h2>با یک دستور خودتان اجرایش کنید</h2>
         </div>
 
         <div class="self-host-panel">
           <p>
-            کل برنامه یک باینری Go با فرانت‌اند embed‌شده است. برای اجرای یک نمونه‌ی شخصی
-            روی سرور یا لپ‌تاپ خودتان، فقط این دستور کافی است:
+            کل برنامه یک فایل اجرایی است که فرانت‌اند هم داخلش جا گرفته. برای اجرا روی
+            سرور یا لپ‌تاپ خودتان همین یک دستور کافی است:
           </p>
           <div class="code-block" dir="ltr">
             <pre><code>docker run -p 3030:3030 ghcr.io/systemgroupnet/persian-markdown</code></pre>
@@ -264,7 +273,7 @@
           systemgroupnet
         </a>
       </div>
-      <small>متن‌باز، بدون ردیابی، بدون درخواست شبکه‌ی شخص ثالث.</small>
+      <small>متن‌باز، بدون ردیابی، بدون درخواست به سرویس‌های دیگر.</small>
     </div>
   </footer>
 </body>

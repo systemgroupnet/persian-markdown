@@ -1,5 +1,5 @@
 /*
-  Persian Markdown Editor — landing page stylesheet.
+  Persian Markdown Editor landing page stylesheet.
 
   Design tokens are COPIED from the app's theme (web/src), not imported.
   See PLAN.md §11: a zero-dependency static page should not depend on the
@@ -7,7 +7,7 @@
   nothing breaks.
 
   Rules:
-  - one neutral OKLCH ramp (chroma 0 everywhere — strictly monochrome),
+  - one neutral OKLCH ramp (chroma 0 everywhere, strictly monochrome),
     light by default, dark via prefers-color-scheme
   - --radius: 2px, used uniformly, including on the "avatar" cursor tag
     in the hero mockup (a square, not a circle)
@@ -60,7 +60,7 @@
 
   --max-width: 72rem;
 
-  /* Neutral OKLCH ramp — light (default) */
+  /* Neutral OKLCH ramp, light (default) */
   --background: oklch(98.5% 0 0);
   --surface: oklch(100% 0 0);
   --surface-raised: oklch(96.5% 0 0);
@@ -484,7 +484,7 @@ section {
 
 /* Any Latin-script code/label inside the RTL page must be forced LTR,
    both for correct glyph order and so it stays copyable/selectable
-   left-to-right — see PLAN.md §11. */
+   left-to-right. See PLAN.md §11. */
 [dir="ltr"] {
   unicode-bidi: isolate;
 }
