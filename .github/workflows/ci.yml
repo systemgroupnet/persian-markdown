@@ -68,9 +68,13 @@ jobs:
         with:
           version: ${{ env.PNPM_VERSION }}
 
+      # jsdom 30 / undici 8 (vitest's DOM environment) require Node >= 22.22:
+      # on Node 20 undici's CacheStorage calls worker_threads.markAsUncloneable,
+      # which doesn't exist there, and vitest reports it as an unhandled error
+      # per test file even though every test passes.
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: pnpm
           cache-dependency-path: web/pnpm-lock.yaml
 
