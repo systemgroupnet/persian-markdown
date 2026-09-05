@@ -1,0 +1,69 @@
+/*
+ * Split view layout (PLAN.md §5.2/§5.4).
+ *
+ * CSS Grid with children in *document* order (editor, splitter, preview),
+ * no explicit `grid-column` placement — the browser lays logical grid
+ * columns out start-to-end according to the container's own `dir`, so
+ * flipping `dir` from ltr to rtl mirrors the whole layout for free. Never
+ * left/right here, only the grid's natural flow + logical properties.
+ */
+
+.pmd-split {
+  display: grid;
+  grid-template-columns: var(--pmd-split-a, 1fr) auto var(--pmd-split-b, 1fr);
+  grid-template-rows: 1fr;
+  block-size: 100%;
+  min-block-size: 0;
+  overflow: hidden;
+}
+
+.pmd-split__pane {
+  min-block-size: 0;
+  min-inline-size: 0;
+  overflow: auto;
+}
+
+.pmd-split__pane--editor {
+  border-inline-end: 1px solid var(--border);
+}
+
+.pmd-split__pane--preview {
+  /* The Preview component (markdown/pipeline.tsx) is itself the scrolling
+     element (block-size:100%; overflow-y:auto in preview.css) so it works
+     identically stand-alone; this wrapper must not *also* scroll, or the
+     pane would grow two nested scrollbars. */
+  overflow: hidden;
+}
+
+.pmd-split__splitter {
+  inline-size: 5px;
+  block-size: 100%;
+  cursor: col-resize;
+  background: transparent;
+  position: relative;
+  touch-action: none;
+  padding: 0;
+  border: none;
+  appearance: none;
+}
+
+.pmd-split__splitter::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 2px;
+  inline-size: 1px;
+  background: var(--border);
+}
+
+.pmd-split__splitter:hover::after,
+.pmd-split__splitter:focus-visible::after {
+  inset-inline-start: 1px;
+  inline-size: 3px;
+  background: var(--foreground);
+}
+
+.pmd-split__splitter:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: -1px;
+}

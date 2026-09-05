@@ -1,0 +1,403 @@
+/*
+ * Rendered-markdown typography (PLAN.md §5.5/§5.7).
+ *
+ * Strictly monochrome: every color reaches for the shared neutral tokens
+ * from web/src/styles/theme.css (--foreground/--background/--border/
+ * --muted/--muted-foreground), never a raw color. Structure comes from 1px
+ * borders, never shadows. `--radius` (2px) is the only corner rounding.
+ *
+ * RTL: every rule below uses LOGICAL properties (inline-start/end,
+ * margin-inline-*, padding-inline-*, border-inline-*) so the whole
+ * typographic system mirrors correctly under `dir="rtl"`/`dir="auto"`
+ * without a single left/right in sight. Per-element `dir="auto"` itself is
+ * set by rehypeDirAuto.ts, not here — this file only styles.
+ *
+ * This file is imported two ways:
+ *  - directly, as a normal Vite stylesheet, by pipeline.tsx (live preview)
+ *  - as raw text (`?raw`), by renderToHtml.ts, to build the `previewCss`
+ *    export the HTML-export feature inlines into a self-contained file.
+ */
+
+.pmd-preview {
+  box-sizing: border-box;
+  block-size: 100%;
+  overflow-y: auto;
+  max-width: 72ch;
+  margin-inline: auto;
+  padding: 1.5rem;
+  color: var(--foreground);
+  font-family: var(--font-sans, sans-serif);
+  font-size: 1rem;
+  line-height: 1.9; /* generous — Persian diacritics need vertical room */
+  overflow-wrap: anywhere;
+}
+
+.pmd-preview > :first-child {
+  margin-block-start: 0;
+}
+.pmd-preview > :last-child {
+  margin-block-end: 0;
+}
+
+/* ---- Headings ---------------------------------------------------- */
+
+.pmd-preview h1,
+.pmd-preview h2,
+.pmd-preview h3,
+.pmd-preview h4,
+.pmd-preview h5,
+.pmd-preview h6 {
+  font-weight: 700;
+  line-height: 1.4;
+  margin-block: 1.6em 0.7em;
+}
+
+.pmd-preview h1 {
+  font-size: 1.75rem;
+  padding-block-end: 0.4em;
+  border-block-end: 1px solid var(--border);
+}
+
+.pmd-preview h2 {
+  font-size: 1.375rem;
+  padding-block-end: 0.3em;
+  border-block-end: 1px solid var(--border);
+}
+
+.pmd-preview h3 {
+  font-size: 1.125rem;
+}
+
+.pmd-preview h4,
+.pmd-preview h5,
+.pmd-preview h6 {
+  font-size: 1rem;
+  color: var(--muted-foreground);
+}
+
+/* ---- Paragraphs, rules -------------------------------------------- */
+
+.pmd-preview p {
+  margin-block: 0.9em;
+}
+
+.pmd-preview hr {
+  border: none;
+  border-block-start: 1px solid var(--border);
+  margin-block: 2em;
+}
+
+/* ---- Lists ---------------------------------------------------------
+   Comfortable indentation that works in both directions: padding-inline-
+   start pushes the marker away from the block's own start edge, whichever
+   physical side that resolves to. */
+
+.pmd-preview ul,
+.pmd-preview ol {
+  margin-block: 0.9em;
+  padding-inline-start: 1.6em;
+}
+
+/*
+ * Markers must be declared, not inherited. Tailwind's preflight sets
+ * `list-style: none` on ul/ol, so relying on the browser default silently
+ * renders every list as unmarked paragraphs — which is what shipped until a
+ * real browser check caught it. The nesting sequence is spelled out because
+ * the same reset kills the default disc/circle/square progression too.
+ */
+.pmd-preview ul {
+  list-style-type: disc;
+}
+.pmd-preview ul ul {
+  list-style-type: circle;
+}
+.pmd-preview ul ul ul {
+  list-style-type: square;
+}
+.pmd-preview ol {
+  list-style-type: decimal;
+}
+.pmd-preview ol ol {
+  list-style-type: lower-alpha;
+}
+
+/*
+ * Markers sit outside the content box, so in an RTL list they hang off the
+ * right edge automatically — no direction-specific rule needed, provided
+ * nothing here uses physical properties.
+ */
+.pmd-preview li {
+  list-style-position: outside;
+}
+
+.pmd-preview li + li {
+  margin-block-start: 0.35em;
+}
+
+.pmd-preview li > ul,
+.pmd-preview li > ol {
+  margin-block: 0.35em;
+}
+
+/* GFM task list checkboxes */
+.pmd-preview li.task-list-item {
+  list-style: none;
+  margin-inline-start: -1.6em;
+  padding-inline-start: 1.6em;
+}
+
+.pmd-preview li.task-list-item input[type="checkbox"] {
+  margin-inline-end: 0.5em;
+  accent-color: var(--foreground);
+}
+
+/* ---- Blockquote ----------------------------------------------------- */
+
+.pmd-preview blockquote {
+  margin-block: 1em;
+  margin-inline: 0;
+  padding-inline-start: 1em;
+  border-inline-start: 2px solid var(--border);
+  color: var(--muted-foreground);
+}
+
+/* ---- Links ------------------------------------------------------- */
+
+.pmd-preview a {
+  color: var(--foreground);
+  text-underline-offset: 0.2em;
+}
+
+/* ---- Tables — RTL needs particular care here (PLAN §5.4).
+   Column *order* follows the table's own dir (rehypeDirAuto sets dir=auto
+   on <table> too), and per-cell alignment is logicalized (start/end, not
+   left/right) so a `:--`/`--:` authored column stays the leading/trailing
+   column in either direction rather than snapping to a physical side. */
+
+.pmd-preview table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-block: 1.2em;
+  font-size: 0.9375rem;
+}
+
+.pmd-preview th,
+.pmd-preview td {
+  border: 1px solid var(--border);
+  padding-block: 0.5em;
+  padding-inline: 0.75em;
+  text-align: start; /* default alignment when no :--/--: marker is given */
+}
+
+.pmd-preview th {
+  background: var(--muted);
+  font-weight: 700;
+}
+
+.pmd-preview tr:nth-child(even) td {
+  background: color-mix(in oklch, var(--muted) 45%, transparent);
+}
+
+/* ---- Inline code + fenced code (fallback, pre-shiki/unsupported lang)
+   Code is always dir="ltr" (rehypeDirAuto) — a flag or path inside an RTL
+   sentence must stay copy/paste-correct, not visually reordered. */
+
+.pmd-preview code {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.875em;
+  background: var(--muted);
+  border-radius: var(--radius);
+  padding-inline: 0.35em;
+  padding-block: 0.1em;
+}
+
+.pmd-preview pre {
+  margin-block: 1.1em;
+  padding: 0.9em 1em;
+  overflow-x: auto;
+  background: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  line-height: 1.6;
+}
+
+.pmd-preview pre code {
+  background: none;
+  padding: 0;
+  font-size: 0.875rem;
+}
+
+/* ---- Shiki-highlighted blocks --------------------------------------
+   Monochrome theme (see markdown/shiki.ts): every token category is a
+   `var(--pmd-shiki-token-*)` shiki writes verbatim into each span's style
+   attribute, bound here to the app's existing neutral tokens — so
+   highlighting tracks light/dark for free, with zero hue anywhere.
+   Tokens are told apart by weight/opacity only, layered on via attribute
+   selectors that match the literal variable name shiki emits. */
+
+.pmd-preview .shiki {
+  --pmd-shiki-foreground: var(--foreground);
+  --pmd-shiki-background: var(--muted);
+  --pmd-shiki-token-keyword: var(--foreground);
+  --pmd-shiki-token-string: var(--foreground);
+  --pmd-shiki-token-string-expression: var(--foreground);
+  --pmd-shiki-token-comment: var(--muted-foreground);
+  --pmd-shiki-token-constant: var(--foreground);
+  --pmd-shiki-token-function: var(--foreground);
+  --pmd-shiki-token-parameter: var(--foreground);
+  --pmd-shiki-token-punctuation: var(--muted-foreground);
+  --pmd-shiki-token-link: var(--foreground);
+  --pmd-shiki-token-inserted: var(--foreground);
+  --pmd-shiki-token-deleted: var(--foreground);
+  --pmd-shiki-token-changed: var(--foreground);
+
+  margin-block: 1.1em;
+  padding: 0.9em 1em;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  line-height: 1.6;
+}
+
+.pmd-preview .shiki code {
+  background: none;
+  padding: 0;
+  font-size: 0.875rem;
+  font-family: var(--font-mono, monospace);
+}
+
+.pmd-preview .shiki [style*="token-comment"] {
+  opacity: 0.7;
+  font-style: italic;
+}
+.pmd-preview .shiki [style*="token-keyword"] {
+  font-weight: 600;
+}
+.pmd-preview .shiki [style*="token-function"] {
+  font-weight: 500;
+}
+.pmd-preview .shiki [style*="token-constant"] {
+  font-weight: 500;
+  opacity: 0.92;
+}
+.pmd-preview .shiki [style*="token-string"] {
+  opacity: 0.85;
+}
+.pmd-preview .shiki [style*="token-punctuation"] {
+  opacity: 0.6;
+}
+.pmd-preview .shiki [style*="token-parameter"] {
+  opacity: 0.85;
+  font-style: italic;
+}
+.pmd-preview .shiki [style*="token-link"] {
+  text-decoration: underline;
+}
+.pmd-preview .shiki [style*="token-deleted"] {
+  text-decoration: line-through;
+  opacity: 0.75;
+}
+.pmd-preview .shiki [style*="token-inserted"] {
+  font-weight: 600;
+}
+
+/* ---- KaTeX ------------------------------------------------------- */
+
+.pmd-preview .katex-display {
+  margin-block: 1.1em;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-block: 0.2em;
+}
+
+/* ---- Mermaid --------------------------------------------------------
+   Diagrams get their color entirely from the themeVariables passed to
+   mermaid.initialize() (see markdown/mermaid.tsx), which reference these
+   same neutral tokens — this block only handles layout/chrome. */
+
+.pmd-preview .pmd-mermaid {
+  margin-block: 1.1em;
+  overflow-x: auto;
+  text-align: center;
+}
+
+.pmd-preview .pmd-mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.pmd-preview .pmd-mermaid--loading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  padding: 1.25em;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--muted);
+}
+
+.pmd-preview .pmd-mermaid__placeholder-bar {
+  display: block;
+  height: 0.85em;
+  border-radius: var(--radius);
+  background: var(--border);
+  opacity: 0.6;
+  animation: pmd-mermaid-pulse 1.4s ease-in-out infinite;
+}
+.pmd-preview .pmd-mermaid__placeholder-bar:nth-child(1) {
+  width: 70%;
+}
+.pmd-preview .pmd-mermaid__placeholder-bar:nth-child(2) {
+  width: 100%;
+  animation-delay: 0.15s;
+}
+.pmd-preview .pmd-mermaid__placeholder-bar:nth-child(3) {
+  width: 45%;
+  animation-delay: 0.3s;
+}
+
+@keyframes pmd-mermaid-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pmd-preview .pmd-mermaid__placeholder-bar {
+    animation: none;
+    opacity: 0.5;
+  }
+}
+
+.pmd-preview .pmd-mermaid--error {
+  padding: 1em;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--muted);
+  text-align: start;
+}
+
+.pmd-preview .pmd-mermaid__message {
+  margin: 0 0 0.5em;
+  color: var(--muted-foreground);
+  font-size: 0.9em;
+}
+
+.pmd-preview .pmd-mermaid__source {
+  margin: 0;
+  overflow-x: auto;
+  font-size: 0.8125em;
+}
+
+/* ---- Empty state --------------------------------------------------- */
+
+.pmd-preview-empty {
+  padding: 1.5rem;
+  color: var(--muted-foreground);
+  font-size: 0.9375rem;
+  text-align: center;
+}
