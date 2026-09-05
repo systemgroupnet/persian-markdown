@@ -1,5 +1,7 @@
 # Persian Markdown Editor
 
+![Screenshot](screenshot.png)
+
 A collaborative, RTL-first markdown editor with no sign-up required. A React
 frontend paired with an Operational Transformation engine written in Go,
 shipped as a single binary.
