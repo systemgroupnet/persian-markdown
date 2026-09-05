@@ -1,0 +1,557 @@
+/*
+  Persian Markdown Editor — landing page stylesheet.
+
+  Design tokens are COPIED from the app's theme (web/src), not imported.
+  See PLAN.md §11: a zero-dependency static page should not depend on the
+  app's Tailwind v4 build. If the two drift by a few percent of gray,
+  nothing breaks.
+
+  Rules:
+  - one neutral OKLCH ramp (chroma 0 everywhere — strictly monochrome),
+    light by default, dark via prefers-color-scheme
+  - --radius: 2px, used uniformly, including on the "avatar" cursor tag
+    in the hero mockup (a square, not a circle)
+  - structure from 1px borders, never box-shadow
+  - logical properties only, no left/right
+*/
+
+/* ---------- Fonts (self-hosted, no CDN) ---------- */
+
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("/assets/fonts/Vazirmatn[wght].woff2") format("woff2-variations");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Fallback statics for browsers without variable-font support. */
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("/assets/fonts/Vazirmatn-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("/assets/fonts/Vazirmatn-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("/assets/fonts/Vazirmatn-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ---------- Design tokens ---------- */
+
+:root {
+  --radius: 2px;
+
+  --font-sans: "Vazirmatn", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, "Vazirmatn", monospace;
+
+  --max-width: 72rem;
+
+  /* Neutral OKLCH ramp — light (default) */
+  --background: oklch(98.5% 0 0);
+  --surface: oklch(100% 0 0);
+  --surface-raised: oklch(96.5% 0 0);
+  --foreground: oklch(17% 0 0);
+  --muted: oklch(94% 0 0);
+  --muted-foreground: oklch(40% 0 0);
+  --border: oklch(85% 0 0);
+  --border-strong: oklch(72% 0 0);
+  --focus-ring: oklch(17% 0 0);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: oklch(15% 0 0);
+    --surface: oklch(18.5% 0 0);
+    --surface-raised: oklch(22% 0 0);
+    --foreground: oklch(96% 0 0);
+    --muted: oklch(24% 0 0);
+    --muted-foreground: oklch(68% 0 0);
+    --border: oklch(32% 0 0);
+    --border-strong: oklch(44% 0 0);
+    --focus-ring: oklch(96% 0 0);
+  }
+}
+
+/* ---------- Reset ---------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: light dark;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--background);
+  color: var(--foreground);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+}
+
+h1,
+h2,
+h3,
+p,
+figure {
+  margin: 0;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+/* ---------- Focus states ---------- */
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius);
+}
+
+/* ---------- Skip link ---------- */
+
+.skip-link {
+  position: absolute;
+  inset-inline-start: 1rem;
+  top: -3rem;
+  background: var(--foreground);
+  color: var(--background);
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius);
+  z-index: 100;
+  transition: top 0.15s ease;
+}
+
+.skip-link:focus-visible {
+  top: 1rem;
+  outline-color: var(--background);
+}
+
+/* ---------- Layout helpers ---------- */
+
+.wrap {
+  max-width: var(--max-width);
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 4vw, 2.5rem);
+}
+
+section {
+  padding-block: clamp(3rem, 8vw, 6rem);
+}
+
+/* ---------- Header ---------- */
+
+.site-header {
+  border-block-end: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--background);
+  z-index: 10;
+}
+
+.site-header .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 0.9rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 700;
+  font-size: 1.05rem;
+  text-decoration: none;
+}
+
+.brand-mark {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
+  display: grid;
+  place-items: center;
+  background: var(--surface-raised);
+  flex-shrink: 0;
+}
+
+.brand-mark svg {
+  width: 16px;
+  height: 16px;
+}
+
+.main-nav ul {
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 1.75rem);
+}
+
+.main-nav a {
+  text-decoration: none;
+  color: var(--muted-foreground);
+  font-size: 0.95rem;
+  padding-block: 0.25rem;
+  border-block-end: 1px solid transparent;
+}
+
+.main-nav a:hover {
+  color: var(--foreground);
+  border-block-end-color: var(--border-strong);
+}
+
+.nav-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.nav-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ---------- Buttons ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.4rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.btn-primary {
+  background: var(--foreground);
+  color: var(--background);
+  border-color: var(--foreground);
+}
+
+.btn-primary:hover {
+  opacity: 0.88;
+}
+
+.btn-secondary {
+  background: var(--surface);
+  color: var(--foreground);
+}
+
+.btn-secondary:hover {
+  background: var(--muted);
+}
+
+.cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  padding-block-start: 0.5rem;
+}
+
+/* ---------- Hero ---------- */
+
+.hero .wrap {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(2rem, 6vw, 3.5rem);
+  align-items: center;
+}
+
+@media (min-width: 64rem) {
+  .hero .wrap {
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.15fr);
+  }
+}
+
+.hero-eyebrow {
+  display: inline-block;
+  font-size: 0.8rem;
+  color: var(--muted-foreground);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.25rem 0.65rem;
+  margin-block-end: 1rem;
+}
+
+.hero h1 {
+  font-size: clamp(2.1rem, 4.5vw, 3.2rem);
+  line-height: 1.25;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.hero .lede {
+  margin-block-start: 1.1rem;
+  font-size: clamp(1.05rem, 2vw, 1.25rem);
+  color: var(--muted-foreground);
+  max-width: 42ch;
+}
+
+/* ---------- Hero mockup ---------- */
+
+.mockup-frame {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 0.75rem;
+}
+
+.mockup-frame svg {
+  width: 100%;
+  height: auto;
+}
+
+.mockup-frame .frame-bg {
+  fill: var(--surface);
+}
+
+.mockup-frame .titlebar-bg {
+  fill: var(--surface-raised);
+}
+
+.mockup-frame .stroke-border {
+  stroke: var(--border);
+}
+
+.mockup-frame .stroke-strong {
+  stroke: var(--border-strong);
+}
+
+.mockup-frame .fill-border {
+  fill: var(--border);
+}
+
+.mockup-frame .fill-strong {
+  fill: var(--border-strong);
+}
+
+.mockup-frame .fill-muted {
+  fill: var(--muted);
+}
+
+.mockup-frame .text-fg {
+  fill: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+.mockup-frame .text-muted {
+  fill: var(--muted-foreground);
+  font-family: var(--font-sans);
+}
+
+.mockup-frame .text-mono {
+  fill: var(--foreground);
+  font-family: var(--font-mono);
+}
+
+/* ---------- Section headings ---------- */
+
+.section-head {
+  max-width: 46ch;
+  margin-block-end: clamp(2rem, 5vw, 3rem);
+}
+
+.section-head .eyebrow {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--muted-foreground);
+  margin-block-end: 0.5rem;
+}
+
+.section-head h2 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+/* ---------- Features ---------- */
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.feature-card {
+  background: var(--surface);
+  padding: 1.75rem 1.5rem;
+}
+
+.feature-icon {
+  width: 20px;
+  height: 20px;
+  margin-block-end: 1rem;
+  color: var(--foreground);
+}
+
+.feature-card h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-block-end: 0.5rem;
+}
+
+.feature-card p {
+  color: var(--muted-foreground);
+  font-size: 0.95rem;
+}
+
+/* ---------- Self-hosting ---------- */
+
+.self-host-panel {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.self-host-panel p {
+  color: var(--muted-foreground);
+  max-width: 60ch;
+  margin-block-end: 1.25rem;
+}
+
+.code-block {
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+}
+
+.code-block pre {
+  margin: 0;
+}
+
+.code-block code {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  white-space: pre;
+}
+
+/* Any Latin-script code/label inside the RTL page must be forced LTR,
+   both for correct glyph order and so it stays copyable/selectable
+   left-to-right — see PLAN.md §11. */
+[dir="ltr"] {
+  unicode-bidi: isolate;
+}
+
+.inline-code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--muted);
+  border-radius: var(--radius);
+  padding: 0.1em 0.4em;
+}
+
+/* ---------- Footer ---------- */
+
+.site-footer {
+  border-block-start: 1px solid var(--border);
+  padding-block: 2.5rem;
+}
+
+.site-footer .wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.footer-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  text-decoration: none;
+  color: var(--muted-foreground);
+  font-size: 0.9rem;
+}
+
+.footer-links a:hover {
+  color: var(--foreground);
+}
+
+.footer-links svg {
+  width: 16px;
+  height: 16px;
+}
+
+.site-footer small {
+  color: var(--muted-foreground);
+  font-size: 0.85rem;
+}
+
+/* ---------- Visually hidden ---------- */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

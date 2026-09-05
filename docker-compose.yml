@@ -1,0 +1,71 @@
+# Self-hosting the Persian Markdown Editor.
+#
+#   docker compose up -d          # build and run on http://localhost:3030
+#   docker compose logs -f        # follow the structured log
+#   docker compose down           # stop; the documents volume survives
+#
+# The service is a single static binary with the frontend embedded, so there
+# is nothing else to orchestrate — no database container, no reverse proxy
+# required, no migrations. The only thing that must outlive the container is
+# the SQLite file, which is why the named volume below is the important line
+# in this file rather than an afterthought.
+
+services:
+  pmd:
+    build:
+      context: .
+      args:
+        # Stamped into both the binary and the About dialog. Override with
+        # `VERSION=1.2.3 docker compose build` when cutting a release.
+        VERSION: ${VERSION:-dev}
+        COMMIT: ${COMMIT:-none}
+    image: ghcr.io/systemgroupnet/persian-markdown:${VERSION:-dev}
+    container_name: persian-markdown
+    restart: unless-stopped
+
+    ports:
+      # Bound to localhost by default. Publishing this straight to 0.0.0.0
+      # puts an unauthenticated editor on the open internet: anyone who
+      # guesses or is given a room id can read and edit it. Put a reverse
+      # proxy with TLS in front before changing this to "3030:3030".
+      - "127.0.0.1:3030:3030"
+
+    volumes:
+      # Every shared document lives here. Losing this volume loses them all;
+      # rooms are snapshotted to it a couple of seconds after each edit.
+      - pmd-data:/data
+
+    command:
+      - "-addr=:3030"
+      - "-db=/data/pmd.db"
+      # Documents untouched for this long are purged. It is the only data
+      # lifecycle control the product has, because there are no accounts to
+      # attach a deletion request to — set it deliberately.
+      - "-retention=720h"
+      # An empty room leaves memory after this, and is restored from disk on
+      # the next join.
+      - "-expiry=24h"
+      - "-log-level=info"
+
+    # Hardening. The image is distroless/static running as uid 65532, and the
+    # process writes nothing outside /data, so it needs no writable root.
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+    # No healthcheck is declared here on purpose. The image has no shell and
+    # no curl/wget, so the usual CMD-SHELL probe cannot run inside it. Check
+    # GET /api/health from outside the container — an orchestrator, an uptime
+    # monitor, or the reverse proxy — rather than adding a probe that would
+    # silently never succeed.
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  pmd-data:

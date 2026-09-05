@@ -1,0 +1,102 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+# Cancel superseded runs on the same branch/PR to save CI minutes.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # This machine's local Go install cannot download newer toolchains (see
+  # go.mod's `go 1.22` directive and the Makefile); pin the same behavior in
+  # CI so a stray toolchain bump fails loudly here too.
+  GOTOOLCHAIN: local
+  PNPM_VERSION: "9"
+
+jobs:
+  go:
+    name: go vet / build / test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: go vet
+        run: go vet ./...
+
+      - name: go build
+        run: go build ./...
+
+      - name: go test
+        run: go test ./... -count=1
+
+  go-race:
+    name: go test -race (cgo)
+    runs-on: ubuntu-latest
+    env:
+      # The race detector needs cgo; this is why it's a separate CI-only job
+      # instead of part of `make test` — the Windows dev box can't run it.
+      CGO_ENABLED: 1
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: go test -race
+        run: go test ./... -count=1 -race
+
+  web:
+    name: web tsc / vitest
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: web/pnpm-lock.yaml
+
+      - name: install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: tsc --noEmit
+        run: pnpm exec tsc --noEmit
+
+      - name: vitest run
+        run: pnpm exec vitest run
+
+  docker:
+    name: docker build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      # Build only, to prove the Dockerfile produces an image — never
+      # pushed, and no publish/release job exists in this workflow.
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          tags: pmd:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

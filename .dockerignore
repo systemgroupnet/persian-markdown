@@ -1,0 +1,30 @@
+# Keep the build context small and avoid shipping anything the Dockerfile
+# doesn't need (or shouldn't be able) to see. The Dockerfile rebuilds
+# web/dist itself, so a stale local build is never leaked into the image.
+
+.git
+.github
+
+# Compiled outputs — the Dockerfile builds its own.
+pmd
+pmd.exe
+web/dist
+
+# Frontend dependency caches — reinstalled inside the frontend build stage.
+node_modules
+web/node_modules
+
+# SQLite state — never ship data, only the code that produces it.
+*.db
+*.db-wal
+*.db-shm
+
+# The GitHub Pages landing site: unrelated to the app image.
+site
+
+# Editors / OS cruft.
+.DS_Store
+.idea
+.vscode
+*.log
+docker-compose.yml

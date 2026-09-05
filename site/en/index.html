@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Persian Markdown Editor</title>
+  <meta name="description" content="A real-time, collaborative markdown editor with true RTL support — no sign-up, nothing to install, open source." />
+  <meta name="color-scheme" content="light dark" />
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='2' fill='%23171717'/%3E%3Cg stroke='%23fafafa' stroke-width='1.5' stroke-linecap='round'%3E%3Cline x1='6' y1='9' x2='18' y2='9'/%3E%3Cline x1='6' y1='15' x2='18' y2='15'/%3E%3Cline x1='11' y1='4' x2='9' y2='20'/%3E%3Cline x1='15' y1='4' x2='13' y2='20'/%3E%3C/g%3E%3C/svg%3E" />
+
+  <link rel="preload" href="/assets/fonts/Vazirmatn[wght].woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <svg class="visually-hidden" aria-hidden="true" width="0" height="0">
+    <defs>
+      <symbol id="icon-hash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="4" y1="9" x2="20" y2="9" />
+        <line x1="4" y1="15" x2="20" y2="15" />
+        <line x1="10" y1="3" x2="8" y2="21" />
+        <line x1="16" y1="3" x2="14" y2="21" />
+      </symbol>
+
+      <symbol id="icon-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z" />
+      </symbol>
+
+      <symbol id="icon-align" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="20" y1="6" x2="4" y2="6" />
+        <line x1="20" y1="12" x2="10" y2="12" />
+        <line x1="20" y1="18" x2="7" y2="18" />
+      </symbol>
+
+      <symbol id="icon-columns" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4" width="5" height="16" rx="1" />
+        <rect x="9.5" y="4" width="5" height="16" rx="1" />
+        <rect x="16" y="4" width="5" height="16" rx="1" />
+      </symbol>
+
+      <symbol id="icon-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3v12" />
+        <path d="m7 10 5 5 5-5" />
+        <path d="M4 19h16" />
+      </symbol>
+
+      <symbol id="icon-github" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.71 1.25 3.37.96.1-.75.4-1.25.73-1.54-2.55-.29-5.23-1.28-5.23-5.69 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 2.9-.39c.98 0 1.97.13 2.9.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.09 0 4.42-2.69 5.4-5.25 5.68.41.36.78 1.05.78 2.12 0 1.53-.01 2.76-.01 3.14 0 .31.21.68.8.56A10.52 10.52 0 0 0 23.5 12c0-6.27-5.23-11.5-11.5-11.5Z" />
+      </symbol>
+
+      <symbol id="icon-scale" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3v18" />
+        <path d="M7 6h10" />
+        <path d="m5 9-3 5a3 3 0 0 0 6 0Z" />
+        <path d="m19 9-3 5a3 3 0 0 0 6 0Z" />
+      </symbol>
+
+      <symbol id="icon-server" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4" width="18" height="7" rx="1" />
+        <rect x="3" y="13" width="18" height="7" rx="1" />
+        <line x1="7" y1="7.5" x2="7.01" y2="7.5" />
+        <line x1="7" y1="16.5" x2="7.01" y2="16.5" />
+      </symbol>
+    </defs>
+  </svg>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="#main">
+        <span class="brand-mark" aria-hidden="true">
+          <svg><use href="#icon-hash" /></svg>
+        </span>
+        Persian Markdown Editor
+      </a>
+      <nav class="main-nav" aria-label="Main">
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#self-hosting">Self-hosting</a></li>
+          <li>
+            <a class="nav-icon" href="https://github.com/systemgroupnet/persian-markdown">
+              <svg aria-hidden="true"><use href="#icon-github" /></svg>
+              GitHub
+            </a>
+          </li>
+          <li>
+            <a href="/"><span dir="rtl" lang="fa">فارسی</span></a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- ============ Hero ============ -->
+    <section class="hero">
+      <div class="wrap">
+        <div class="hero-copy">
+          <span class="hero-eyebrow">Open source · MIT · no server required</span>
+          <h1>Persian markdown, written together, in real time</h1>
+          <p class="lede">
+            Create a room, share the link, and start writing together instantly —
+            with genuine bidirectional layout, not a mirrored left-to-right UI.
+          </p>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="https://github.com/systemgroupnet/persian-markdown">
+              Get started
+            </a>
+            <a class="btn btn-secondary" href="#self-hosting">
+              <svg aria-hidden="true"><use href="#icon-server" /></svg>
+              Self-host
+            </a>
+          </div>
+        </div>
+
+        <div class="mockup-frame">
+          <svg
+            viewBox="0 0 720 460"
+            role="img"
+            aria-label="Screenshot of the editor: raw markdown source for a meeting note on the left, its live rendered preview on the right, including a collaborator's cursor."
+          >
+            <rect class="frame-bg stroke-border" x="1" y="1" width="718" height="458" rx="2" stroke-width="1" />
+            <rect class="titlebar-bg" x="1" y="1" width="718" height="40" rx="2" />
+            <rect class="titlebar-bg" x="1" y="21" width="718" height="20" />
+
+            <rect class="fill-strong" x="16" y="16" width="8" height="8" rx="2" />
+            <rect class="fill-strong" x="32" y="16" width="8" height="8" rx="2" />
+            <rect class="fill-strong" x="48" y="16" width="8" height="8" rx="2" />
+
+            <text class="text-muted" x="360" y="25" text-anchor="middle" font-size="12">
+              room: blue-fox
+            </text>
+
+            <line class="stroke-border" x1="1" y1="41" x2="719" y2="41" stroke-width="1" />
+            <line class="stroke-border" x1="360" y1="41" x2="360" y2="459" stroke-width="1" />
+
+            <!-- Left pane: raw source -->
+            <text class="text-muted" x="17" y="66" text-anchor="start" font-size="12">Source</text>
+
+            <text class="text-fg" x="17" y="96" text-anchor="start" font-size="17" font-weight="700">
+              # Meeting notes
+            </text>
+
+            <rect class="fill-border" x="17" y="112" width="157" height="9" rx="2" />
+            <rect class="fill-border" x="17" y="128" width="117" height="9" rx="2" />
+
+            <text class="text-fg" x="17" y="160" text-anchor="start" font-size="14">- [ ] Review HTML export</text>
+            <text class="text-fg" x="17" y="182" text-anchor="start" font-size="14">- [x] Test RTL layout</text>
+
+            <rect class="fill-muted stroke-border" x="17" y="204" width="322" height="70" rx="2" stroke-width="1" />
+            <text class="text-mono text-muted" x="33" y="224" text-anchor="start" font-size="12">```js</text>
+            <text class="text-mono text-fg" x="33" y="244" text-anchor="start" font-size="12">toFaDigits(42)</text>
+            <text class="text-mono text-muted" x="33" y="264" text-anchor="start" font-size="12">```</text>
+
+            <rect class="fill-border" x="17" y="292" width="117" height="9" rx="2" />
+            <rect class="fill-border" x="17" y="308" width="77" height="9" rx="2" />
+            <rect class="fill-border" x="17" y="324" width="157" height="9" rx="2" />
+
+            <!-- Right pane: live preview -->
+            <text class="text-muted" x="703" y="66" text-anchor="end" font-size="12">Preview</text>
+
+            <text class="text-fg" x="703" y="98" text-anchor="end" font-size="19" font-weight="700">
+              Meeting notes
+            </text>
+
+            <rect class="fill-border" x="463" y="114" width="240" height="9" rx="2" />
+            <rect class="fill-border" x="513" y="130" width="190" height="9" rx="2" />
+
+            <rect class="fill-muted stroke-strong" x="669" y="154" width="14" height="14" rx="2" stroke-width="1" />
+            <text class="text-fg" x="661" y="165" text-anchor="end" font-size="13">Review HTML export</text>
+
+            <rect class="fill-strong" x="669" y="182" width="14" height="14" rx="2" />
+            <text class="text-fg" x="661" y="193" text-anchor="end" font-size="13">Test RTL layout</text>
+
+            <rect class="fill-muted stroke-border" x="381" y="212" width="322" height="46" rx="2" stroke-width="1" />
+            <text class="text-mono text-fg" x="687" y="240" text-anchor="end" font-size="13">42</text>
+
+            <rect class="fill-border" x="503" y="282" width="200" height="9" rx="2" />
+            <rect class="fill-border" x="443" y="298" width="260" height="9" rx="2" />
+            <rect class="fill-border" x="553" y="314" width="150" height="9" rx="2" />
+
+            <!-- Remote collaborator cursor + name tag (2px-radius square, never a circle) -->
+            <rect class="fill-strong" x="568" y="278" width="2" height="16" />
+            <rect class="stroke-strong fill-muted" x="500" y="298" width="90" height="18" rx="2" stroke-width="1" />
+            <text class="text-fg" x="545" y="311" text-anchor="middle" font-size="11">green-squirrel</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Features ============ -->
+    <section id="features">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">Why this editor</span>
+          <h2>Four things that actually matter</h2>
+        </div>
+
+        <div class="features-grid">
+          <article class="feature-card">
+            <svg class="feature-icon" aria-hidden="true"><use href="#icon-zap" /></svg>
+            <h3>Real-time, no sign-up</h3>
+            <p>Create a room and share the link; collaborative editing starts immediately, no account needed.</p>
+          </article>
+
+          <article class="feature-card">
+            <svg class="feature-icon" aria-hidden="true"><use href="#icon-align" /></svg>
+            <h3>Genuine RTL support</h3>
+            <p>Correct bidirectional layout from the ground up, not a mirrored left-to-right interface.</p>
+          </article>
+
+          <article class="feature-card">
+            <svg class="feature-icon" aria-hidden="true"><use href="#icon-columns" /></svg>
+            <h3>Three view modes</h3>
+            <p>Raw source, live preview, or WYSIWYG editing — switch between them any time.</p>
+          </article>
+
+          <article class="feature-card">
+            <svg class="feature-icon" aria-hidden="true"><use href="#icon-download" /></svg>
+            <h3>MD and HTML export</h3>
+            <p>Save the document to your own device as a markdown file or as HTML, whenever you want.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Self-hosting ============ -->
+    <section id="self-hosting">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">Your data, your server</span>
+          <h2>Self-host with one command</h2>
+        </div>
+
+        <div class="self-host-panel">
+          <p>
+            The whole app is a single Go binary with the frontend embedded. To run
+            your own instance on a server or laptop, this is all it takes:
+          </p>
+          <div class="code-block" dir="ltr">
+            <pre><code>docker run -p 3030:3030 ghcr.io/systemgroupnet/persian-markdown</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-links">
+        <a href="https://github.com/systemgroupnet/persian-markdown/blob/main/LICENSE">
+          <svg aria-hidden="true"><use href="#icon-scale" /></svg>
+          MIT license
+        </a>
+        <a href="https://github.com/systemgroupnet/persian-markdown">
+          <svg aria-hidden="true"><use href="#icon-github" /></svg>
+          Source code
+        </a>
+        <a href="https://github.com/systemgroupnet">
+          <svg aria-hidden="true"><use href="#icon-github" /></svg>
+          systemgroupnet
+        </a>
+      </div>
+      <small>Open source, no tracking, zero third-party network requests.</small>
+    </div>
+  </footer>
+</body>
+</html>

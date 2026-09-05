@@ -1,0 +1,62 @@
+name: Deploy landing site to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "site/**"
+      - "web/public/assets/fonts/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Assemble site artifact
+        run: |
+          set -euo pipefail
+          rm -rf _site
+          mkdir -p _site
+
+          # Hand-written, no-build static site (site/**) is the artifact root.
+          cp -r site/. _site/
+
+          # Self-hosted fonts are produced by a separate build step into
+          # web/public/assets/fonts/ and are NOT committed under site/.
+          # Merge them in here so the page's "/assets/fonts/..." references
+          # resolve on the published site.
+          mkdir -p _site/assets/fonts
+          if [ -d web/public/assets/fonts ]; then
+            cp -r web/public/assets/fonts/. _site/assets/fonts/
+          else
+            echo "::warning::web/public/assets/fonts not found; deploying without self-hosted fonts."
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
