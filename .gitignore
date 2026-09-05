@@ -1,0 +1,19 @@
+# Go
+/pmd
+/pmd.exe
+*.db
+*.db-wal
+*.db-shm
+
+# Frontend
+node_modules/
+# go:embed needs the directory to exist and contain at least one file, but the
+# build output itself must never be committed - a hashed index.html referencing
+# gitignored assets would embed a broken frontend into a fresh clone.
+web/dist/*
+!web/dist/.gitkeep
+
+# Editors / OS
+.DS_Store
+.idea/
+.vscode/
