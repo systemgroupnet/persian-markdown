@@ -28,7 +28,7 @@ services:
       # puts an unauthenticated editor on the open internet: anyone who
       # guesses or is given a room id can read and edit it. Put a reverse
       # proxy with TLS in front before changing this to "3030:3030".
-      - "127.0.0.1:3030:3030"
+      - "3080:3030"
 
     volumes:
       # Every shared document lives here. Losing this volume loses them all;
