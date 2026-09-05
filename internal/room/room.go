@@ -256,7 +256,13 @@ func (r *Room) HistorySince(revision int) (int, []UserOperation) {
 		revision = 0
 	}
 	if revision >= len(r.ops) {
-		return len(r.ops), nil
+		// An empty slice, never nil. encoding/json renders a nil slice as
+		// `null`, and a client that strictly validates `operations` as an
+		// array rejects the whole message — which for a brand-new room is the
+		// *initial* History, so the session never establishes a baseline and
+		// silently never becomes ready. Returning [] keeps the wire contract
+		// "operations is always an array".
+		return len(r.ops), []UserOperation{}
 	}
 	out := make([]UserOperation, len(r.ops)-revision)
 	copy(out, r.ops[revision:])

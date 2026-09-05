@@ -143,8 +143,17 @@ function decodeUserOperation(v: unknown): UserOperation {
 
 function decodeHistory(v: unknown): HistoryMsg {
   const r = asRecord(v, "History");
-  const opsRaw = r.operations;
+
+  // `null` is accepted as an empty history. Go's encoding/json renders a nil
+  // slice as `null` rather than `[]`, so a server that has nothing to replay
+  // — the initial History for a brand-new room — can legitimately send it.
+  // Rejecting that message meant the session never established a baseline and
+  // never became ready, with no error surfaced anywhere the user could see.
+  // The server is fixed to always send an array; this stays tolerant so an
+  // older server does not brick the client.
+  const opsRaw = r.operations ?? [];
   if (!Array.isArray(opsRaw)) throw new ProtocolError("History.operations must be an array");
+
   return { start: asNumber(r.start, "History.start"), operations: opsRaw.map(decodeUserOperation) };
 }
 

@@ -1,7 +1,9 @@
 package server
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -421,4 +423,42 @@ func TestMissingAssetIs404NotTheSPAShell(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestInitialHistoryEncodesEmptyOperationsAsArray pins the wire contract that
+// `operations` is always a JSON array.
+//
+// A nil Go slice marshals to `null`. The client validates the field strictly,
+// so `null` made it reject the initial History of every brand-new room. The
+// session then never established a baseline and never became ready — silently,
+// because typing still worked through a first-connect fallback. What broke was
+// anything gated on readiness, including seeding a freshly shared room, which
+// surfaced to users as sharing a document and arriving at an empty one.
+func TestInitialHistoryEncodesEmptyOperationsAsArray(t *testing.T) {
+	srv := newTestServer(t)
+	c := dial(t, srv, "roomempty1")
+
+	deadline := time.Now().Add(5 * time.Second)
+	for time.Now().Before(deadline) {
+		msg := c.read()
+		if msg.History == nil {
+			continue
+		}
+		if msg.History.Operations == nil {
+			t.Fatal("History.Operations is nil; it marshals to null and the client rejects it")
+		}
+
+		blob, err := json.Marshal(msg)
+		if err != nil {
+			t.Fatalf("marshal: %v", err)
+		}
+		if bytes.Contains(blob, []byte(`"operations":null`)) {
+			t.Fatalf("initial History encodes operations as null: %s", blob)
+		}
+		if !bytes.Contains(blob, []byte(`"operations":[]`)) {
+			t.Fatalf("initial History should encode operations as []: %s", blob)
+		}
+		return
+	}
+	t.Fatal("never received an initial History message")
 }

@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useCallback, useMemo, useState } from "react";
 import {
   Code2,
   Columns2,
@@ -31,6 +31,7 @@ import { Presence } from "@/app/Presence";
 import { useCollabDocument } from "@/app/useCollabDocument";
 import { useRoomLocation } from "@/app/useRoomLocation";
 import { goToRoom, mintRoomId } from "@/room/location";
+import { stashSeed } from "@/room/seed";
 import { saveMarkdown, exportDocumentAsHtml } from "@/export";
 import { SourceView } from "@/views/source";
 import type { NormalizationPreview } from "@/views/wysiwyg/WysiwygView";
@@ -90,24 +91,14 @@ export function App() {
    * the private session and builds a new one.
    */
   const handleCreateRoom = useCallback(() => {
-    const seed = doc.text;
     const id = mintRoomId();
-    sessionStorage.setItem(seedKey(id), seed);
+    // Stash before navigating: the hash change tears down the private session
+    // and builds the shared one, and useCollabDocument applies the seed to
+    // that new session once it has a baseline.
+    stashSeed(id, doc.text);
     goToRoom(id);
     setShareOpen(false);
   }, [doc.text]);
-
-  // Seed a freshly shared room once its session is live and empty. Guarded on
-  // `ready` so we never race the server's initial History and duplicate the
-  // text, and the key is consumed so a later reload cannot re-seed.
-  useEffect(() => {
-    if (location.kind !== "shared" || !doc.ready) return;
-    const key = seedKey(location.id);
-    const seed = sessionStorage.getItem(key);
-    if (seed === null) return;
-    sessionStorage.removeItem(key);
-    if (seed !== "" && doc.text === "") doc.replaceAll(seed);
-  }, [location, doc.ready, doc.text, doc.replaceAll]);
 
   const handleSaveMarkdown = useCallback(async () => {
     setBusy(true);
@@ -278,9 +269,6 @@ export function App() {
   );
 }
 
-function seedKey(id: string): string {
-  return `pmd:seed:${id}`;
-}
 
 function HeaderButton({
   icon: Icon,

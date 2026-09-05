@@ -27,6 +27,7 @@ import {
 import { OffsetIndex, OpSeq } from "@/ot";
 import type { RemoteCursor, TextChange, LocalSelection } from "@/views/types";
 import type { RoomLocation } from "@/room/location";
+import { clearSeed, decideSeed, peekSeed } from "@/room/seed";
 
 const PRIVATE_DOC_ID = "private";
 
@@ -39,8 +40,6 @@ export interface CollabDocument {
   remoteCursors: RemoteCursor[];
   applyChange: (change: TextChange) => void;
   setSelection: (selection: LocalSelection) => void;
-  /** Replace the whole document, used when seeding a freshly shared room. */
-  replaceAll: (next: string) => void;
 }
 
 export function useCollabDocument(location: RoomLocation): CollabDocument {
@@ -67,14 +66,55 @@ export function useCollabDocument(location: RoomLocation): CollabDocument {
     setSession(next);
     indexRef.current = new OffsetIndex(next.text);
 
+    /*
+     * Seeding a freshly shared room happens here, against `next`, rather than
+     * in a component effect reading `doc.text`.
+     *
+     * The location changes synchronously on a hash change, but the session is
+     * replaced by this effect. A component effect keyed on the location
+     * therefore runs at least once while the PREVIOUS session is still
+     * current — for a share that is the private document, whose text is not
+     * empty. The old code consumed the stashed seed on that render and then
+     * failed its own "document is empty" guard, destroying the text it was
+     * carrying. Deciding here means the session under inspection is always the
+     * one the seed was stashed for.
+     */
+    let seedSettled = location.kind !== "shared";
+
+    const considerSeed = () => {
+      if (seedSettled || location.kind !== "shared") return;
+
+      const decision = decideSeed({
+        seed: peekSeed(location.id),
+        ready: next.presence.ready,
+        documentIsEmpty: next.text === "",
+      });
+
+      // "wait" is the important branch: leave the seed untouched so a later
+      // update can still apply it.
+      if (decision === "wait") return;
+
+      seedSettled = true;
+      if (decision === "apply") {
+        const seed = peekSeed(location.id) ?? "";
+        const op = new OpSeq();
+        op.insert(seed);
+        next.applyLocalChange(op);
+      }
+      if (decision !== "none") clearSeed(location.id);
+    };
+
     const unsubscribe = next.subscribe(() => {
       // Resync the index whenever the session's text moves for any reason —
       // remote operations included.
       if (indexRef.current.document !== next.text) {
         indexRef.current.reset(next.text);
       }
+      considerSeed();
       bump((n) => n + 1);
     });
+
+    considerSeed();
 
     return () => {
       unsubscribe();
@@ -112,18 +152,6 @@ export function useCollabDocument(location: RoomLocation): CollabDocument {
         ? [[index.toBytes(selection.selection.from), index.toBytes(selection.selection.to)]]
         : [];
       session.setCursor(cursors, selections);
-    },
-    [session],
-  );
-
-  const replaceAll = useCallback(
-    (next: string) => {
-      if (!session) return;
-      const index = indexRef.current;
-      const op = new OpSeq();
-      op.delete(index.byteLength);
-      op.insert(next);
-      session.applyLocalChange(op);
     },
     [session],
   );
@@ -172,6 +200,5 @@ export function useCollabDocument(location: RoomLocation): CollabDocument {
     remoteCursors,
     applyChange,
     setSelection,
-    replaceAll,
   };
 }
