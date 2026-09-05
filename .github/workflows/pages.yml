@@ -2,7 +2,7 @@ name: Deploy landing site to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches: [master]
     paths:
       - "site/**"
       - "web/public/assets/fonts/**"
