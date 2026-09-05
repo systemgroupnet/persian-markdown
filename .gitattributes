@@ -1,0 +1,17 @@
+# Normalise to LF in the repository and in working copies on every platform.
+# This project is developed on Windows but built and run on Linux (Docker, CI),
+# where a CRLF shebang line makes a shell script fail with a confusing
+# "bad interpreter" error, and a CRLF Makefile breaks recipe parsing.
+* text=auto eol=lf
+
+*.sh   text eol=lf
+Makefile text eol=lf
+
+# Binary assets must never be line-ending converted.
+*.woff2 binary
+*.woff  binary
+*.ttf   binary
+*.png   binary
+*.jpg   binary
+*.webp  binary
+*.ico   binary
