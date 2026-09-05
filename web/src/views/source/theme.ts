@@ -37,6 +37,14 @@ export function createEditorTheme(): Extension {
         overflow: "auto",
       },
       ".cm-content": {
+        // Declared here as well as on .cm-scroller, rather than relying on
+        // inheritance. .cm-content is the element that actually renders the
+        // text, and CodeMirror owns the node between it and .cm-scroller, so
+        // anything that sets a font on that intermediate node — a future
+        // CodeMirror default, or a browser extension rewriting font stacks —
+        // silently wins over an inherited value. Stating it on the element
+        // itself removes that dependency.
+        fontFamily: "var(--font-sans, Vazirmatn, ui-sans-serif, system-ui, sans-serif)",
         caretColor: "var(--foreground)",
         padding: "12px 0",
       },
