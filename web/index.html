@@ -14,6 +14,22 @@
       type="font/woff2"
       crossorigin="anonymous"
     />
+
+    <!-- Pre-paint theme restore.
+         Deliberately inline and render-blocking: React only applies the
+         stored preference in an effect, so without this a user who forced
+         light on a dark-mode machine gets a full-page flash of dark before
+         the first paint. Four lines in the <head> is the standard price for
+         not having that.
+         The key and attribute MUST match src/app/useTheme.ts. -->
+    <script>
+      try {
+        var t = localStorage.getItem("pmd:theme");
+        if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {
+        /* storage blocked — fall through to prefers-color-scheme */
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

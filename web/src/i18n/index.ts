@@ -56,6 +56,10 @@ export interface Dictionary {
     fa: string;
     en: string;
   };
+  theme: {
+    toLight: string;
+    toDark: string;
+  };
 }
 
 export type Locale = "fa" | "en";

@@ -57,6 +57,14 @@
 :root {
   --radius: 2px;
 
+  /*
+   * `color-scheme` is what retints the things CSS variables cannot reach:
+   * scrollbars, the caret, focus rings, and native form-control chrome. It
+   * MUST be declared in every one of the three blocks below, or forcing light
+   * on a dark OS leaves dark scrollbars framing a white page.
+   */
+  color-scheme: light;
+
   /* Light ramp (default) */
   --background: oklch(99% 0 0);
   --foreground: oklch(16% 0 0);
@@ -90,6 +98,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
+    color-scheme: dark;
     --background: oklch(17% 0 0);
     --foreground: oklch(95% 0 0);
     --border: oklch(31% 0 0);
@@ -101,6 +110,7 @@
 }
 
 :root[data-theme="dark"] {
+  color-scheme: dark;
   --background: oklch(17% 0 0);
   --foreground: oklch(95% 0 0);
   --border: oklch(31% 0 0);

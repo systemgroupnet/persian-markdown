@@ -6,9 +6,11 @@ import {
   Info,
   Languages,
   Link2,
+  Moon,
   Save,
   FileCode2,
   HardDrive,
+  Sun,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -30,6 +32,7 @@ import { ShareDialog } from "@/components/share/ShareDialog";
 import { Presence } from "@/app/Presence";
 import { useCollabDocument } from "@/app/useCollabDocument";
 import { useRoomLocation } from "@/app/useRoomLocation";
+import { useTheme } from "@/app/useTheme";
 import { goToRoom, mintRoomId } from "@/room/location";
 import { stashSeed } from "@/room/seed";
 import { saveMarkdown, exportDocumentAsHtml } from "@/export";
@@ -70,6 +73,7 @@ const COMMIT = import.meta.env.VITE_APP_COMMIT ?? "unknown";
 
 export function App() {
   const { t, locale, setLocale } = useI18n();
+  const { theme, toggleTheme } = useTheme();
   const [viewMode, setViewMode] = useState<ViewMode>("split");
   const [shareOpen, setShareOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
@@ -216,6 +220,17 @@ export function App() {
               icon={Info}
               label={t("actions.about")}
               onClick={() => setAboutOpen(true)}
+            />
+            {/*
+              The icon shows the theme the click will GIVE you, not the one
+              you are already looking at — a sun on a dark page reads as
+              "make it light", which is the only thing a two-state button can
+              usefully promise. The label says the same thing in words.
+            */}
+            <HeaderButton
+              icon={theme === "dark" ? Sun : Moon}
+              label={theme === "dark" ? t("theme.toLight") : t("theme.toDark")}
+              onClick={toggleTheme}
             />
             <HeaderButton icon={Languages} label={t("locale.toggle")} onClick={toggleLocale} />
           </div>

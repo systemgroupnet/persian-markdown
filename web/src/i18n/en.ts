@@ -58,4 +58,9 @@ export const en = {
     fa: "فارسی",
     en: "English",
   },
+
+  theme: {
+    toLight: "Switch to light theme",
+    toDark: "Switch to dark theme",
+  },
 } satisfies Dictionary;

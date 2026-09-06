@@ -58,4 +58,9 @@ export const fa = {
     fa: "فارسی",
     en: "English",
   },
+
+  theme: {
+    toLight: "تغییر به پوسته‌ی روشن",
+    toDark: "تغییر به پوسته‌ی تیره",
+  },
 } satisfies Dictionary;
